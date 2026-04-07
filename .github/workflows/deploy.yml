@@ -11,19 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          pip install mkdocs-material mkdocs-mermaid2-plugin
+        run: pip install mkdocs-material mkdocs-mermaid2-plugin
 
       - name: Build documentation
         run: mkdocs build --strict
@@ -31,7 +25,6 @@ jobs:
       - name: Deploy to R2 via Worker
         run: |
           cd worker && npm install
-          # Upload files via R2 API using fetch
           node << 'EOF'
           const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
           const token = process.env.CLOUDFLARE_API_TOKEN;
@@ -39,6 +32,25 @@ jobs:
           
           const fs = require('fs');
           const path = require('path');
+          
+          async function uploadFile(filepath, key) {
+            const body = fs.readFileSync(filepath);
+            
+            const response = await fetch(
+              `https://api.cloudflare.com/client/v4/accounts/${accountId}/r2/buckets/${bucket}/objects/${key}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/octet-stream'
+                },
+                body
+              }
+            );
+            
+            const data = await response.json();
+            console.log(`${data.success ? '✓' : '✗'} ${key}`);
+          }
           
           async function uploadDir(dir, prefix = '') {
             const files = fs.readdirSync(dir);
@@ -50,27 +62,12 @@ jobs:
                 await uploadDir(filepath, prefix + file + '/');
               } else {
                 const key = prefix + file;
-                const body = fs.readFileSync(filepath);
-                
-                const response = await fetch(
-                  `https://api.cloudflare.com/client/v4/accounts/${accountId}/r2/buckets/${bucket}/objects/${key}`,
-                  {
-                    method: 'PUT',
-                    headers: {
-                      'Authorization': `Bearer ${token}`,
-                      'Content-Type': 'application/octet-stream'
-                    },
-                    body
-                  }
-                );
-                
-                const data = await response.json();
-                console.log(`${data.success ? '✓' : '✗'} Uploaded: ${key}`);
+                await uploadFile(filepath, key);
               }
             }
           }
           
-          uploadDir('site');
+          uploadDir('../site');
           EOF
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
