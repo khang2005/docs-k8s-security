@@ -1,0 +1,70 @@
+site_name: K8s Audit Security Dashboard
+site_description: Documentation for K8s Audit Security Dashboard - Log aggregation and visualization using Grafana, Loki, and Alloy
+site_url: https://docs.khangduytran.xyz
+
+repo_name: khangduytran/k8s-audit-security
+repo_url: https://github.com/khangduytran/k8s-audit-security
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.mark
+
+plugins:
+  - search
+  - mermaid2
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/khangduytran
+  generator: false
+
+nav:
+  - Home: index.md
+  - Architecture:
+      - SysML Diagrams: architecture/diagrams.md
+      - Component Structure: architecture/components.md
+  - Installation:
+      - Prerequisites: installation/prerequisites.md
+      - Install Loki: installation/loki.md
+      - Install Alloy: installation/alloy.md
+      - Install Grafana: installation/grafana.md
+      - Dashboard: installation/dashboard.md
+  - Reference:
+      - LogQL Queries: reference/queries.md
+      - Dashboard Panels: reference/panels.md

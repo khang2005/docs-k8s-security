@@ -1,0 +1,2 @@
+[tool.mkdocs-material]
+analytics = { provider = "google", id = "" }
