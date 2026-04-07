@@ -60,4 +60,4 @@ groups:
 
 ## Next Steps
 
-- [LogQL Reference](reference/queries.md) - Query syntax reference
+- [LogQL Reference](../reference/queries.md) - Query syntax reference

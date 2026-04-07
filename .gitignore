@@ -16,6 +16,7 @@ site/
 # Node
 node_modules/
 worker/node_modules/
+worker/package-lock.json
 
 # Terraform
 .terraform/
