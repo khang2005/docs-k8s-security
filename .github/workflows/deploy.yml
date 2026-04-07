@@ -22,14 +22,27 @@ jobs:
       - name: Build documentation
         run: mkdocs build --strict
 
-      - name: Configure AWS CLI
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          aws configure set aws_secret_access_key ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
       - name: Upload to R2
         run: |
-          aws s3 sync ./site s3://docs-k8s-audit --delete \
-            --endpoint-url https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com \
-            --region auto \
-            --no-verify-ssl
+          pip install boto3
+          python3 << 'EOF'
+          import boto3
+          import os
+          
+          s3 = boto3.client(
+              's3',
+              endpoint_url='https://b027b5c8a41425260467575fbae51333.r2.cloudflarestorage.com',
+              aws_access_key_id=os.environ['CLOUDFLARE_API_TOKEN'],
+              aws_secret_access_key=os.environ['CLOUDFLARE_API_TOKEN'],
+              region_name='auto'
+          )
+          
+          for root, dirs, files in os.walk('site'):
+              for file in files:
+                  filepath = os.path.join(root, file)
+                  key = filepath.replace('site/', '')
+                  s3.upload_file(filepath, 'docs-k8s-audit', key)
+                  print(f'Uploaded: {key}')
+          EOF
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
