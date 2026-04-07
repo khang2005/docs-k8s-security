@@ -23,22 +23,13 @@ jobs:
         run: mkdocs build --strict
 
       - name: Configure AWS CLI
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          aws configure set aws_secret_access_key ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Upload to R2
         run: |
           aws s3 sync ./site s3://docs-k8s-audit --delete \
             --endpoint-url https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com \
-            --profile cloudflare
-
-      - name: Deploy Worker
-        run: |
-          cd worker
-          npm install
-          npx wrangler deploy --name docs-worker --yes
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+            --region auto \
+            --no-verify-ssl
