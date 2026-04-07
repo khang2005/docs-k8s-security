@@ -11,38 +11,67 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install mkdocs-material mkdocs-mermaid2-plugin
+        run: |
+          pip install mkdocs-material mkdocs-mermaid2-plugin
 
       - name: Build documentation
         run: mkdocs build --strict
 
-      - name: Upload to R2
+      - name: Deploy to R2 via Worker
         run: |
-          pip install boto3
-          python3 << 'EOF'
-          import boto3
-          import os
+          cd worker && npm install
+          # Upload files via R2 API using fetch
+          node << 'EOF'
+          const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+          const token = process.env.CLOUDFLARE_API_TOKEN;
+          const bucket = 'docs-k8s-audit';
           
-          s3 = boto3.client(
-              's3',
-              endpoint_url='https://b027b5c8a41425260467575fbae51333.r2.cloudflarestorage.com',
-              aws_access_key_id=os.environ['CLOUDFLARE_API_TOKEN'],
-              aws_secret_access_key=os.environ['CLOUDFLARE_API_TOKEN'],
-              region_name='auto'
-          )
+          const fs = require('fs');
+          const path = require('path');
           
-          for root, dirs, files in os.walk('site'):
-              for file in files:
-                  filepath = os.path.join(root, file)
-                  key = filepath.replace('site/', '')
-                  s3.upload_file(filepath, 'docs-k8s-audit', key)
-                  print(f'Uploaded: {key}')
+          async function uploadDir(dir, prefix = '') {
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+              const filepath = path.join(dir, file);
+              const stat = fs.statSync(filepath);
+              
+              if (stat.isDirectory()) {
+                await uploadDir(filepath, prefix + file + '/');
+              } else {
+                const key = prefix + file;
+                const body = fs.readFileSync(filepath);
+                
+                const response = await fetch(
+                  `https://api.cloudflare.com/client/v4/accounts/${accountId}/r2/buckets/${bucket}/objects/${key}`,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/octet-stream'
+                    },
+                    body
+                  }
+                );
+                
+                const data = await response.json();
+                console.log(`${data.success ? '✓' : '✗'} Uploaded: ${key}`);
+              }
+            }
+          }
+          
+          uploadDir('site');
           EOF
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
