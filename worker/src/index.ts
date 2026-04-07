@@ -47,12 +47,10 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   let path = url.pathname;
 
   if (path === '/' || path === '') {
-    path = '/index.html';
+    path = 'index.html';
   }
 
-  if (!path.startsWith('/')) {
-    path = '/' + path;
-  }
+  path = path.replace(/^\//, '');
 
   const asset = await getAsset(path, env);
 
@@ -65,8 +63,8 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
     });
   }
 
-  const indexHtml = await getAsset('/index.html', env);
-  if (indexHtml && path !== '/index.html') {
+  const indexHtml = await getAsset('index.html', env);
+  if (indexHtml && path !== 'index.html') {
     return new Response(indexHtml.body, {
       headers: {
         'Content-Type': 'text/html',
