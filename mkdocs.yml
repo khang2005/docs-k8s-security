@@ -1,9 +1,9 @@
-site_name: K8s Audit Security Dashboard
-site_description: Documentation for K8s Audit Security Dashboard - Log aggregation and visualization using Grafana, Loki, and Alloy
+site_name: Wireless Sensor Hub with K3s Gateway
+site_description: Documentation for Wireless Sensor Hub with K3s Gateway - Distributed sensor system with edge computing
 site_url: https://docs.khangduytran.xyz
 
-repo_name: khangduytran/k8s-audit-security
-repo_url: https://github.com/khangduytran/k8s-audit-security
+repo_name: khangduytran/wireless-sensor-hub
+repo_url: https://github.com/khangduytran/wireless-sensor-hub
 
 theme:
   name: material
@@ -56,15 +56,20 @@ extra:
 
 nav:
   - Home: index.md
-  - Architecture:
-      - SysML Diagrams: architecture/diagrams.md
-      - Component Structure: architecture/components.md
-  - Installation:
-      - Prerequisites: installation/prerequisites.md
-      - Install Loki: installation/loki.md
-      - Install Alloy: installation/alloy.md
-      - Install Grafana: installation/grafana.md
-      - Dashboard: installation/dashboard.md
-  - Reference:
-      - LogQL Queries: reference/queries.md
-      - Dashboard Panels: reference/panels.md
+  - Overview:
+      - Project Overview: overview/project-overview.md
+      - System Architecture: overview/system-architecture.md
+      - Component Breakdown: overview/component-breakdown.md
+      - Data Flow: overview/data-flow.md
+  - Design:
+      - Message Format: design/message-format.md
+      - Technology Stack: design/technology-stack.md
+      - Deployment Architecture: design/deployment-architecture.md
+      - Hardware Architecture: design/hardware-architecture.md
+      - Power Design: design/power-design.md
+      - Reliability Design: design/reliability-design.md
+      - Scalability: design/scalability.md
+      - Maintenance: design/maintenance.md
+      - Future Improvements: design/future-improvements.md
+  - Setup:
+      - Setup and Installation: setup/setup-and-installation.md

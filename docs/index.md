@@ -1,33 +1,13 @@
-# K8s Audit Security Dashboard
+# Wireless Sensor Hub with K3s Gateway
 
-Documentation for the Kubernetes Audit Security Dashboard project. This project provides log aggregation and visualization for Kubernetes audit logs using Grafana, Loki, and Alloy.
+A distributed sensor system designed to collect, process, and visualize environmental data using wireless sensor nodes and an edge computing gateway. The system provides real time data access through a web based dashboard, displayed locally on a touchscreen and remotely through mobile browsers.
 
-## Overview
+![System Architecture Diagram](assets/images/system-architecture-diagram.png)
 
-This dashboard enables security teams to monitor and analyze Kubernetes audit events, providing visibility into:
+---
 
-- API server request patterns
-- Authentication failures
-- Permission escalations
-- Resource modifications
-- Compliance auditing
+## Explore Documentation
 
-## Architecture
-
-The system consists of the following components:
-
-- **Alloy**: Kubernetes-native collector that ships audit logs to Loki
-- **Loki**: Log aggregation system optimized for Kubernetes workloads
-- **Grafana**: Visualization and alerting platform
-- **Cloudflare R2**: Object storage for documentation
-- **Cloudflare Worker**: Serves the documentation site
-
-## Quick Links
-
-- [Architecture Overview](architecture/diagrams.md)
-- [Installation Guide](installation/prerequisites.md)
-- [LogQL Reference](reference/queries.md)
-
-## Repository
-
-[:material-github: khangduytran/k8s-audit-security](https://github.com/khangduytran/k8s-audit-security){ .md-button }
+- **[Overview](overview/project-overview.md)** - Project overview, system architecture, components, and data flow  
+- **[Design](design/message-format.md)** - Message format, technology stack, deployment, hardware, power, reliability, scalability, maintenance, and future improvements  
+- **[Setup](setup/setup-and-installation.md)** - Installation guide, prerequisites, and configuration steps  
