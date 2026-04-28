@@ -22,6 +22,11 @@ jobs:
       - name: Build documentation
         run: mkdocs build --strict
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Deploy to R2
         run: |
           node << 'EOF'
