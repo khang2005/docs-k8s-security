@@ -2,8 +2,8 @@ site_name: Wireless Sensor Hub with K3s Gateway
 site_description: Documentation for Wireless Sensor Hub with K3s Gateway - Distributed sensor system with edge computing
 site_url: https://docs.khangduytran.xyz
 
-repo_name: khangduytran/wireless-sensor-hub
-repo_url: https://github.com/khangduytran/wireless-sensor-hub
+repo_name: khang2005/docs-k8s-security
+repo_url: https://github.com/khang2005/docs-k8s-security
 
 theme:
   name: material
