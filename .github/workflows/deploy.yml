@@ -62,7 +62,11 @@ jobs:
               { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': contentType }, body }
             );
             const data = await response.json();
-            console.log(`${data.success ? '✓' : '✗'} ${key}`);
+            if (!data.success) {
+              console.error(`Failed to upload ${key}:`, data);
+            } else {
+              console.log(`✓ ${key}`);
+            }
           }
 
           async function uploadDir(dir, prefix = '') {
@@ -72,12 +76,16 @@ jobs:
               if (stat.isDirectory()) {
                 await uploadDir(filepath, prefix + file + '/');
               } else {
-                await uploadFile(filepath, prefix + file);
+                // Upload to ROOT of R2 bucket (strip the 'site/' prefix)
+                const r2Key = prefix + file;
+                await uploadFile(filepath, r2Key);
               }
             }
           }
 
+          console.log('Starting upload to R2...');
           uploadDir('site');
+          console.log('Upload complete!');
           EOF
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
