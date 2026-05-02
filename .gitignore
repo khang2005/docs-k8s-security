@@ -22,6 +22,9 @@ worker/package-lock.json
 .terraform/
 *.tfstate
 *.tfstate.*
+terraform.tfvars
+.terraform.tfvars
+*.auto.tfvars
 
 # IDE
 .vscode/
