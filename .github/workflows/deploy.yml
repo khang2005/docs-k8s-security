@@ -76,7 +76,6 @@ jobs:
               if (stat.isDirectory()) {
                 await uploadDir(filepath, prefix + file + '/');
               } else {
-                // Upload to ROOT of R2 bucket (strip the 'site/' prefix)
                 const r2Key = prefix + file;
                 await uploadFile(filepath, r2Key);
               }
@@ -87,6 +86,20 @@ jobs:
           uploadDir('site');
           console.log('Upload complete!');
           EOF
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Deploy Worker
+        working-directory: worker
+        run: |
+          npm install
+          npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
